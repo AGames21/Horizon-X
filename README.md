@@ -85,6 +85,6 @@ The requested EaglercraftX source returned a [GitHub takedown notice](https://gi
 
 ## Publish the launcher
 
-Deploy `dist/` after `npm ci && npm run build` to any static host, such as Cloudflare Pages (build command `npm run build`, output directory `dist`) or GitHub Pages. For GitHub Pages, set **Settings → Pages → Source** to **GitHub Actions**, then manually run **Deploy Horizon X to GitHub Pages** from the repository’s Actions tab. GitHub loads manually dispatched workflows from the default branch. The workflow requires Pages deployment permission. Only deploy the launcher output. Client isolation headers belong on the separately hosted game, as described above.
+Deploy `dist/` after `npm ci && npm run build` to any static host, such as Cloudflare Pages (build command `npm run build`, output directory `dist`) or GitHub Pages. For GitHub Pages, set **Settings → Pages → Source** to **GitHub Actions**, then run **Deploy Horizon X to GitHub Pages** from the repository’s Actions tab for the initial deployment. Subsequent pushes to the default branch deploy automatically. GitHub reports the published URL in the workflow’s deployment result. Only deploy the launcher output. Client isolation headers belong on the separately hosted game, as described above.
 
 The launcher has no account system and is unaffiliated with Mojang Studios or Microsoft.

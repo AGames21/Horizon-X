@@ -1,6 +1,8 @@
 name: Deploy Horizon X to GitHub Pages
 
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
