@@ -139,3 +139,6 @@ footer { display: flex; justify-content: space-between; gap: 12px; padding: 16px
 .compatibility p:empty { display: none; }
 kbd { display: inline-block; font: .75rem system-ui, sans-serif; border: 1px solid var(--edge); padding: 1px 4px; margin-right: 2px; border-radius: 4px; }
 @media (max-width: 700px) { .compatibility { grid-template-columns: 1fr; } }
+
+.hero-secondary { color: #fbf4fc; background: #201b2ae8; border-color: #746075; }
+.hero-secondary:hover { background: #372d43; }

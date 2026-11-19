@@ -1,6 +1,6 @@
 # Horizon X
 
-An independent browser launcher for Horizon Web (Minecraft Java 26.3) and a compatible Classic 1.8.8 client. The dashboard checks WebGPU, WebAssembly and WebGL and launches configured clients in separate tabs.
+An independent browser launcher for Horizon Web (Minecraft Java 26.3) and a compatible Classic 1.8.8 client. The dashboard checks WebGPU, WebAssembly and WebGL and launches configured clients in separate tabs. **Play Minecraft Classic** opens Mojang’s official 2009 browser edition in the current tab. It uses no Horizon X configuration or manual asset download.
 
 ## Run locally
 

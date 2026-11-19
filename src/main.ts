@@ -24,6 +24,7 @@ const modes = {
   modern: { name: 'Modern Mode', client: 'Horizon Web', version: 'Java 26.3', icon: 'box', renderer: 'WebGPU', description: 'Explore modern worlds with the Horizon Rust engine, powered by WebAssembly and WebGPU.' },
   classic: { name: 'Classic Mode', client: 'Eaglercraft', version: '1.8.8', icon: 'grid', renderer: 'WebGL', description: 'Connect to a compatible 1.8.8 browser client using a client address you provide.' },
 } as const
+const officialClassicUrl = 'https://classic.minecraft.net/'
 const localModernUrl = 'http://localhost:8080/'
 const storageKey = 'horizon-x.clients.v1'
 const urls: Record<Mode, string> = { modern: '', classic: '' }
@@ -85,12 +86,15 @@ function play() {
     <div class="hero-content">
       <p class="eyebrow"><span></span> BROWSER GAME LAUNCHER</p>
       <h1>Horizon <em>X</em></h1>
-      <p class="hero-copy">Your browser. Your worlds. Choose a client and jump in.</p>
-      <a class="button hero-button" href="#play" data-modes>Choose a mode ${icon('arrow')}</a>
+      <p class="hero-copy">Play Mojang’s original Minecraft Classic in your browser. No install or client URL required.</p>
+      <div class="button-row">
+        <a class="button hero-button" href="${officialClassicUrl}">${icon('play')} Play Minecraft Classic</a>
+        <a class="button hero-secondary" href="#play" data-modes>Choose a mode ${icon('arrow')}</a>
+      </div>
     </div>
   </section>
   <section class="mode-section" id="game-modes" tabindex="-1">
-    <div class="section-header"><div><h2>Game modes</h2><p>Choose the client that fits your browser.</p></div></div>
+    <div class="section-header"><div><h2>Game modes</h2><p>Configure Horizon Web or a compatible 1.8.8 client.</p></div></div>
     <div class="mode-grid">${modeCard(preferences.mode)}${modeCard(preferences.mode === 'modern' ? 'classic' : 'modern')}</div>
   </section>
   <section class="panel compatibility">
