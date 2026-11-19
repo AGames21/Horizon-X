@@ -27,6 +27,7 @@ const modes = {
 const localModernUrl = 'http://localhost:8080/'
 const storageKey = 'horizon-x.clients.v1'
 const urls: Record<Mode, string> = { modern: '', classic: '' }
+let gpuDetail = 'Checking for a WebGPU adapter…'
 const checks: Record<'gpu' | 'gl' | 'wasm', Check> = { gpu: 'checking', gl: 'checking', wasm: 'checking' }
 const app = document.querySelector<HTMLDivElement>('#app')!
 
@@ -91,6 +92,10 @@ function play() {
   <section class="mode-section" id="game-modes" tabindex="-1">
     <div class="section-header"><div><h2>Game modes</h2><p>Choose the client that fits your browser.</p></div></div>
     <div class="mode-grid">${modeCard(preferences.mode)}${modeCard(preferences.mode === 'modern' ? 'classic' : 'modern')}</div>
+  </section>
+  <section class="panel compatibility">
+    <div><h2>Browser compatibility</h2><p id="gpu-detail" role="status"></p><p id="memory-detail"></p></div>
+    <div><h3>In-game controls</h3><p><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> Move · <kbd>Space</kbd> Jump · <kbd>E</kbd> Inventory · <kbd>Esc</kbd> Pause</p></div>
   </section>`
 }
 
@@ -114,6 +119,14 @@ const otherPages = {
 }
 
 function updateChecks() {
+  const detail = document.getElementById('gpu-detail')
+  if (detail) detail.textContent = gpuDetail
+  const memory = document.getElementById('memory-detail')
+  const estimate = (navigator as Navigator & { deviceMemory?: number }).deviceMemory
+  if (memory && typeof estimate === 'number') {
+    const guidance = estimate <= 4 ? ' Start with a low render distance and close unused tabs.' : ''
+    memory.textContent = `Browser memory estimate: ${estimate} GB.${guidance}`
+  }
   const names = { gpu: 'WebGPU', gl: 'WebGL', wasm: 'WASM' }
   for (const node of document.querySelectorAll<HTMLElement>('[data-check]')) {
     const key = node.dataset.check as keyof typeof names
@@ -123,9 +136,17 @@ function updateChecks() {
 }
 
 function launchUrl(mode: Mode, server?: string): string {
-  if (!server) return urls[mode]
+  if (mode === 'classic') return urls[mode]
+  const parts: string[] = []
+  if (server) parts.push('--server', server)
+  if (preferences.horizonArgs && preferences.playerName) parts.push('--name', preferences.playerName)
+  if (!parts.length && !preferences.showHud) return urls[mode]
   const url = new URL(urls[mode])
-  url.searchParams.set('args', `--server ${server}`)
+  if (parts.length) {
+    const original = server ? '' : url.searchParams.get('args')?.trim()
+    url.searchParams.set('args', [original, ...parts].filter(Boolean).join(' '))
+  }
+  if (preferences.showHud) url.searchParams.set('horizonXHud', '1')
   return url.href
 }
 
@@ -203,6 +224,9 @@ async function detect() {
     checks.gpu = adapter ? 'available' : 'unavailable'
   } catch { checks.gpu = 'unavailable' }
   finally { window.clearTimeout(timeout) }
+  gpuDetail = checks.gpu === 'available' ? 'A WebGPU adapter is available for Modern Mode.' :
+    !window.isSecureContext ? 'Use HTTPS or localhost for WebGPU. Classic Mode uses a separate WebGL client.' :
+    'No WebGPU adapter was detected. Check Chrome or Edge graphics acceleration, or configure Classic Mode for a compatible WebGL client.'
   updateChecks()
 }
 

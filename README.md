@@ -16,7 +16,7 @@ Open **http://localhost:5173** in Chrome or Edge. For a production check, run `n
 ## Modern Mode
 
 1. Install Minecraft Java Edition 26.3 from an account you own and start it once. Prepare the resources with the Horizon launcher or follow [Horizon's native resource guide](https://github.com/nobuildersnotools/horizon-web/blob/web/docs/native-client.md#build-from-source). Keep the prepared files outside the launcher checkout.
-2. Clone Horizon Web next to Horizon X and pin the tested source revision.
+2. Clone Horizon Web next to Horizon X and pin the supported source revision.
 
    ```sh
    git clone --branch web https://github.com/nobuildersnotools/horizon-web.git ../horizon-web
@@ -51,16 +51,29 @@ In **Settings**, enter the HTTPS address of a compatible 1.8.8 browser client yo
 
 Save WebSocket servers in **Multiplayer**. Favorites appear first. Add, edit, delete and favorite work locally in the current browser. Use `wss://` when your client is served over HTTPS.
 
-For a compatible Horizon Web build, enable **Horizon Web quick connect** in **Settings**. **Join in Horizon Web** passes the selected address as `--server` via the upstream `args` parameter, replacing any configured `args` for that launch. The launcher leaves other URL parameters in place. For other clients, open the client and connect manually using the saved address. Shared-world invite codes are entered in Horizon's **Join Shared World** screen.
+For a compatible Horizon Web build, enable **Horizon Web launch arguments** in **Settings**. **Join in Horizon Web** passes the selected address as `--server` via the upstream `args` parameter, replacing any configured `args` for that launch. The launcher leaves other URL parameters in place. For other clients, open the client and connect manually using the saved address. Shared-world invite codes are entered in Horizon's **Join Shared World** screen.
 
 Settings can change the launcher theme, place the preferred mode first, and toggle launcher fullscreen. Graphics presets and render distance are launcher reference preferences. Apply them in game when desired. Preferences can be exported to and imported from a JSON file. Saved servers and client URLs are stored separately in the browser.
 
-## Stage 1 smoke test
+## Performance and controls
 
-- Verify both unconfigured modes link to Settings and the browser capability checks resolve.
-- Set both client URLs, save, reload, and verify both remain set. Launch each and confirm it opens the expected address in a new tab. Clear the addresses and verify setup links return.
-- Open Multiplayer and About, and check the dashboard in a narrow browser window.
-- With a prepared Modern build, verify the title screen, create a world, return to the menu and reopen that world. Gameplay verification requires private game resources and working WebGPU.
+On **Play**, check the renderer results before setting up a client. The memory estimate appears when the browser exposes it. On low-memory devices, use a lower in-game render distance and close unused tabs. Classic requires an independently compatible WebGL client.
+
+Enable **Horizon Web launch arguments** to send an optional offline player name to the supported Horizon Web build. This is the name Horizon uses for offline multiplayer. The game manages its own profiles and saves. To see the FPS and available CPU/GPU timing, build with `npm run modern -- build` and enable **Show Horizon Web performance overlay** in Settings. The overlay reads the actual engine's status and hides when frame samples are unavailable or stale. It is installed only in the private game checkout.
+
+Horizon uses WASD to move, Space to jump, E for inventory and Escape to pause. Its in-game F3 debug screen exposes additional diagnostics.
+
+## Run the checks
+
+```sh
+npm ci
+npx playwright-core install chromium
+npm run test:browser
+```
+
+If Chromium is installed already, use `CHROMIUM_PATH=/path/to/chromium npm run test:browser`. The tests build the TypeScript launcher, open it in Chromium, and exercise setup, both launch URLs, settings persistence, server management, and the performance overlay against a fixture for Horizon's metrics API.
+
+For a gameplay check, run the private Horizon Web build on a WebGPU-capable machine. Open Modern Mode, confirm the title screen, create a world, then return to the menu and reopen that world on the same client origin. Use a compatible server to check a real multiplayer connection.
 
 ## Upstream review
 
@@ -72,6 +85,6 @@ The requested EaglercraftX source returned a [GitHub takedown notice](https://gi
 
 ## Publish the launcher
 
-Deploy `dist/` after `npm ci && npm run build` to any static host, such as Cloudflare Pages (build command `npm run build`, output directory `dist`) or GitHub Pages. For GitHub Pages, set **Settings → Pages → Source** to **GitHub Actions**, then manually run **Deploy Horizon X to GitHub Pages** from the repository’s Actions tab. The workflow requires Pages deployment permission. Only deploy the launcher output. Client isolation headers belong on the separately hosted game, as described above.
+Deploy `dist/` after `npm ci && npm run build` to any static host, such as Cloudflare Pages (build command `npm run build`, output directory `dist`) or GitHub Pages. For GitHub Pages, set **Settings → Pages → Source** to **GitHub Actions**, then manually run **Deploy Horizon X to GitHub Pages** from the repository’s Actions tab. GitHub loads manually dispatched workflows from the default branch. The workflow requires Pages deployment permission. Only deploy the launcher output. Client isolation headers belong on the separately hosted game, as described above.
 
 The launcher has no account system and is unaffiliated with Mojang Studios or Microsoft.

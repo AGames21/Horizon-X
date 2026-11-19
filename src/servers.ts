@@ -5,7 +5,7 @@ const key = 'horizon-x.servers.v1'
 
 function addressOf(value: string) {
   const parsed = URL.parse(value)
-  if (!parsed || !['ws:', 'wss:'].includes(parsed.protocol) || parsed.username || parsed.password || parsed.hash || /\s/.test(value)) {
+  if (!parsed || !['ws:', 'wss:'].includes(parsed.protocol) || parsed.username || parsed.password || /[#\s]/.test(value)) {
     throw new Error('Enter a ws:// or wss:// server address without credentials, spaces or fragments.')
   }
   return parsed.href

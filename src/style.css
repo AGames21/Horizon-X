@@ -133,3 +133,9 @@ footer { display: flex; justify-content: space-between; gap: 12px; padding: 16px
 [data-theme="light"] .panel input::placeholder { color: #685b71; }
 @media (max-width: 900px) { .multiplayer-grid { grid-template-columns: 1fr; } }
 @media (max-width: 450px) { .field-grid { grid-template-columns: 1fr; } }
+.compatibility { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); max-width: none; gap: 18px; }
+.compatibility h2, .compatibility h3 { margin-bottom: 6px; }
+.compatibility h3 { font-size: 1rem; }
+.compatibility p:empty { display: none; }
+kbd { display: inline-block; font: .75rem system-ui, sans-serif; border: 1px solid var(--edge); padding: 1px 4px; margin-right: 2px; border-radius: 4px; }
+@media (max-width: 700px) { .compatibility { grid-template-columns: 1fr; } }

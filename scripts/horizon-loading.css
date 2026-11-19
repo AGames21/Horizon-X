@@ -1,0 +1,18 @@
+#status:not(:empty) {
+  box-sizing: border-box;
+  align-content: center;
+  display: grid;
+  gap: 14px;
+  padding: 28px;
+  grid-template-columns: minmax(0, 650px);
+  background: radial-gradient(ellipse at 65% 20%, #3c2739, #15131b 68%);
+  color: #f5edf6;
+  overflow-wrap: anywhere;
+}
+#status:not(:empty)::before {
+  content: 'HORIZON X';
+  display: block;
+  color: #ffa47b;
+  font: 800 13px/1.4 system-ui, sans-serif;
+  letter-spacing: .16em;
+}

@@ -7,9 +7,11 @@
     "dev": "vite --host 0.0.0.0",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --host 0.0.0.0",
-    "modern": "bash scripts/modern.sh"
+    "modern": "bash scripts/modern.sh",
+    "test:browser": "npm run build && node --test tests/browser.test.mjs"
   },
   "devDependencies": {
+    "playwright-core": "1.65.1",
     "typescript": "5.9.3",
     "vite": "7.3.1"
   }

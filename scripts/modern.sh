@@ -59,6 +59,7 @@ case "$action" in
     fi
     PROFILE=${PROFILE:-fast} DIST=web/dist BUNDLE=1 HORIZON_RESOURCES="$resources" bash web/build.sh
     verify
+    python3 "$launcher/scripts/install-horizon-hud.py" web/dist
     ;;
   verify) verify ;;
   serve)
