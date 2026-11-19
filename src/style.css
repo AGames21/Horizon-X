@@ -99,3 +99,5 @@ footer { display: flex; justify-content: space-between; gap: 12px; padding: 16px
 }
 @media (max-width: 550px) { .mode-grid { grid-template-columns: 1fr; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; scroll-behavior: auto !important; } }
+.secondary { color: var(--accent); background: transparent; border-color: var(--edge); }
+.secondary:hover { background: var(--edge); }

@@ -15,12 +15,33 @@ Open **http://localhost:5173** in Chrome or Edge. For a production check, run `n
 
 ## Modern Mode
 
-1. Install Minecraft Java Edition 26.3 from an account you own and start it once. Prepare the local Horizon resources as documented in [Horizon’s native client guide](https://github.com/nobuildersnotools/horizon-web/blob/web/docs/native-client.md#build-from-source). Keep the resources private and put them in the Horizon Web checkout at `.local/horizon-client/26.3`.
-2. In a separate checkout of [Horizon Web’s web branch](https://github.com/nobuildersnotools/horizon-web/tree/web), follow the [browser build guide](https://github.com/nobuildersnotools/horizon-web/blob/web/web/README.md#build-and-run). It specifies Rust nightly `nightly-2026-10-14` with `rust-src`, the `wasm32-unknown-unknown` target, wasm-bindgen CLI `0.2.129`, and Binaryen for optimized release builds. Run `PROFILE=fast web/build.sh` for development, then `python3 web/serve.py`.
-3. In Horizon X, open **Settings**, set Modern client URL to `http://localhost:8080/`, and save. Return to **Play** and select **Launch Modern**.
-4. Use a Chromium browser with a working WebGPU adapter. The game server must send COOP `same-origin` and COEP `require-corp` or use upstream’s packaged service worker. World saves, sound, controller input, profiles, and game settings are handled by the client. Keep using the same game origin to access its browser saves.
+1. Install Minecraft Java Edition 26.3 from an account you own and start it once. Prepare the resources with the Horizon launcher or follow [Horizon's native resource guide](https://github.com/nobuildersnotools/horizon-web/blob/web/docs/native-client.md#build-from-source). Keep the prepared files outside the launcher checkout.
+2. Clone Horizon Web next to Horizon X and pin the tested source revision.
 
-For a private remote deployment, use an HTTPS address and upstream's packaging instructions. The generated Horizon Web folder includes game resources. Keep it outside this repository and out of the public launcher deployment.
+   ```sh
+   git clone --branch web https://github.com/nobuildersnotools/horizon-web.git ../horizon-web
+   git -C ../horizon-web checkout --detach 83eb3376109f0676fc8d12c6b2455dd3258c84db
+   ```
+
+3. From the Horizon Web checkout, install the [upstream browser toolchain](https://github.com/nobuildersnotools/horizon-web/blob/web/web/README.md#build-and-run). Use Python 3.11+ for launcher verification.
+
+   ```sh
+   rustup toolchain install nightly-2026-10-14 --component rust-src --target wasm32-unknown-unknown
+   cargo +nightly-2026-10-14 install --locked wasm-bindgen-cli --version 0.2.129
+   ```
+
+4. From Horizon X, build with a private resource folder and serve using Horizon Web's loopback server. Omit `HORIZON_RESOURCES` if the prepared version folder is at `.local/horizon-client/26.3` inside Horizon Web. The scripts verify the WebAssembly header and upstream artifact hashes before serving. Use `PROFILE=release` and install Binaryen for an optimized build.
+
+   ```sh
+   HORIZON_RESOURCES=/absolute/path/to/prepared/26.3 npm run modern -- build ../horizon-web
+   npm run modern -- serve ../horizon-web
+   ```
+
+5. In Horizon X, open **Settings**, select **Use local Horizon Web address**, and save. Return to **Play** and select **Launch Modern**. Horizon Web manages download and startup progress, handles game errors, and saves worlds in origin-private browser storage. Keep using the same client origin, including the port, to access those saves.
+
+For a private remote deployment, use HTTPS with COOP `same-origin` and COEP `require-corp`, or upstream's packaged service worker. Use Chrome or Edge with a working WebGPU adapter. Keep the generated Horizon Web folder private because its resource bundle contains your game files.
+
+Astris is an alternative for users who already have a prepared folder or ZIP and prefer the browser import flow. Set a trusted Astris address as the Modern URL. Its documented feature set differs from Horizon Web, particularly for multiplayer.
 
 ## Classic Mode
 

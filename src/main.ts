@@ -23,6 +23,7 @@ const modes = {
   modern: { name: 'Modern Mode', client: 'Horizon Web', version: 'Java 26.3', icon: 'box', renderer: 'WebGPU', description: 'Explore modern worlds with the Horizon Rust engine, powered by WebAssembly and WebGPU.' },
   classic: { name: 'Classic Mode', client: 'Eaglercraft', version: '1.8.8', icon: 'grid', renderer: 'WebGL', description: 'Connect to a compatible 1.8.8 browser client using a client address you provide.' },
 } as const
+const localModernUrl = 'http://localhost:8080/'
 const storageKey = 'horizon-x.clients.v1'
 const urls: Record<Mode, string> = { modern: '', classic: '' }
 const checks: Record<'gpu' | 'gl' | 'wasm', Check> = { gpu: 'checking', gl: 'checking', wasm: 'checking' }
@@ -98,7 +99,8 @@ function settings() {
       <h2>Client addresses</h2>
       <label for="modern-url">Modern client URL</label>
       <input id="modern-url" name="modern" type="url" placeholder="http://localhost:8080/" aria-describedby="modern-help" />
-      <p id="modern-help">Use a private Horizon Web build prepared from your own copy of Minecraft Java 26.3. Follow the <a href="https://github.com/nobuildersnotools/horizon-web/blob/web/web/README.md" target="_blank" rel="noopener noreferrer">Horizon Web build guide</a>, start its web server, then paste its address here.</p>
+      <p id="modern-help">Prepare Java 26.3 resources from your own Minecraft installation, then serve Horizon Web privately. Follow the <a href="https://github.com/nobuildersnotools/horizon-web/blob/web/web/README.md" target="_blank" rel="noopener noreferrer">Horizon Web build guide</a>, start its web server, then paste its address here. The game tab handles loading, resource errors and world saves.</p>
+      <button type="button" class="button secondary" id="use-local-modern">Use local Horizon Web address</button>
       <label for="classic-url">Classic client URL</label>
       <input id="classic-url" name="classic" type="url" placeholder="https://your-client.example/" aria-describedby="classic-help" />
       <p id="classic-help">Enter the address of a compatible 1.8.8 build you are authorized to use. Leave either field blank to clear it.</p>
@@ -148,6 +150,11 @@ function render() {
     const input = form.elements.namedItem(mode) as HTMLInputElement
     input.value = urls[mode]
   }
+  document.getElementById('use-local-modern')?.addEventListener('click', () => {
+    const input = form.elements.namedItem('modern') as HTMLInputElement
+    input.value = localModernUrl
+    input.focus()
+  })
   form.addEventListener('submit', event => {
     event.preventDefault()
     const status = document.getElementById('form-status')!
