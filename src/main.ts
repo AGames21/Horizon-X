@@ -1,4 +1,6 @@
 import './style.css'
+import { bindPreferences, preferencePanel, preferences, type Mode } from './preferences'
+import { bindServers, multiplayerPage } from './servers'
 
 const shapes = {
   logo: '<path d="M3 19 10 5h4l-2.5 5 3 5 4.5-9h4l-7 14h-4l-3-5L7 19z" fill="currentColor" stroke="none"/>',
@@ -16,7 +18,6 @@ const icon = (name: keyof typeof shapes) => `<svg viewBox="0 0 24 24" fill="none
 
 const pages = { play: 'Play', multiplayer: 'Multiplayer', settings: 'Settings', about: 'About' } as const
 type Page = keyof typeof pages
-type Mode = 'modern' | 'classic'
 type Check = 'checking' | 'available' | 'unavailable'
 const navIcons = { play: 'play', multiplayer: 'users', settings: 'settings', about: 'info' } as const
 const modes = {
@@ -89,7 +90,7 @@ function play() {
   </section>
   <section class="mode-section" id="game-modes" tabindex="-1">
     <div class="section-header"><div><h2>Game modes</h2><p>Choose the client that fits your browser.</p></div></div>
-    <div class="mode-grid">${modeCard('modern')}${modeCard('classic')}</div>
+    <div class="mode-grid">${modeCard(preferences.mode)}${modeCard(preferences.mode === 'modern' ? 'classic' : 'modern')}</div>
   </section>`
 }
 
@@ -105,11 +106,10 @@ function settings() {
       <input id="classic-url" name="classic" type="url" placeholder="https://your-client.example/" aria-describedby="classic-help" />
       <p id="classic-help">Enter the address of a compatible 1.8.8 build you are authorized to use. Leave either field blank to clear it.</p>
       <button class="button primary" type="submit">Save client addresses</button><p id="form-status" role="status"></p>
-    </form>`
+    </form>${preferencePanel()}`
 }
 
 const otherPages = {
-  multiplayer: () => `<h1 class="page-title">Multiplayer</h1><p class="page-intro">Join from the client that supports your server.</p><div class="panel"><h2>Connect in game</h2><p>Launch Modern Mode and use the game’s Multiplayer menu for supported WebSocket servers. Use Join Shared World for a Horizon world share code. Classic server compatibility depends on your configured Classic client.</p><a class="button primary" href="#play">Choose a client ${icon('arrow')}</a></div>`,
   about: () => `<h1 class="page-title">About Horizon X</h1><p class="page-intro">An independent launcher for Minecraft-compatible browser clients.</p><div class="panel"><h2>Bring your own game files</h2><p>Modern Mode opens Horizon Web, a Rust and WebAssembly client. Prepare Java 26.3 resources from a copy you own and serve your build privately. Each launched client manages its own worlds, storage and controls.</p><p>Horizon X is unaffiliated with Mojang Studios or Microsoft.</p><a href="https://github.com/nobuildersnotools/horizon-web/tree/web" target="_blank" rel="noopener noreferrer">Horizon Web source ${icon('external')}</a></div>`,
 }
 
@@ -122,6 +122,13 @@ function updateChecks() {
   }
 }
 
+function launchUrl(mode: Mode, server?: string): string {
+  if (!server) return urls[mode]
+  const url = new URL(urls[mode])
+  url.searchParams.set('args', `--server ${server}`)
+  return url.href
+}
+
 function render() {
   const page = currentPage()
   app.innerHTML = `<div class="layout">
@@ -132,12 +139,14 @@ function render() {
     </aside>
     <div class="workspace">
       <header class="topbar"><span>Launcher <b>/</b> <strong>${pages[page]}</strong></span><a href="#settings" class="top-settings" aria-label="Client settings">${icon('settings')}</a></header>
-      <main id="main-content" tabindex="-1">${page === 'play' ? play() : page === 'settings' ? settings() : otherPages[page]()}</main>
+      <main id="main-content" tabindex="-1">${page === 'play' ? play() : page === 'settings' ? settings() : page === 'multiplayer' ? multiplayerPage() : otherPages.about()}</main>
       <footer><span>Horizon X</span><span>Independent browser launcher</span></footer>
     </div>
   </div>`
   updateChecks()
-  for (const link of document.querySelectorAll<HTMLAnchorElement>('[data-launch]')) link.href = urls[link.dataset.launch as Mode]
+  bindPreferences()
+  bindServers(urls, launchUrl)
+  for (const link of document.querySelectorAll<HTMLAnchorElement>('[data-launch]')) link.href = launchUrl(link.dataset.launch as Mode)
   document.querySelector('[data-modes]')?.addEventListener('click', event => {
     event.preventDefault()
     const section = document.getElementById('game-modes')

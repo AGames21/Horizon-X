@@ -47,6 +47,14 @@ Astris is an alternative for users who already have a prepared folder or ZIP and
 
 In **Settings**, enter the HTTPS address of a compatible 1.8.8 browser client you are authorized to use. A localhost address also works for a local build. Save, return to **Play**, and select **Launch Classic**. The launcher checks WebGL and the chosen client determines actual compatibility.
 
+## Multiplayer and preferences
+
+Save WebSocket servers in **Multiplayer**. Favorites appear first. Add, edit, delete and favorite work locally in the current browser. Use `wss://` when your client is served over HTTPS.
+
+For a compatible Horizon Web build, enable **Horizon Web quick connect** in **Settings**. **Join in Horizon Web** passes the selected address as `--server` via the upstream `args` parameter, replacing any configured `args` for that launch. The launcher leaves other URL parameters in place. For other clients, open the client and connect manually using the saved address. Shared-world invite codes are entered in Horizon's **Join Shared World** screen.
+
+Settings can change the launcher theme, place the preferred mode first, and toggle launcher fullscreen. Graphics presets and render distance are launcher reference preferences. Apply them in game when desired. Preferences can be exported to and imported from a JSON file. Saved servers and client URLs are stored separately in the browser.
+
 ## Stage 1 smoke test
 
 - Verify both unconfigured modes link to Settings and the browser capability checks resolve.
